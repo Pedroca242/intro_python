@@ -3,23 +3,31 @@ import time
 import matplotlib.pyplot as plt
 
 class cliente:
-    def __init__(self, id, pos, goal):
+    def __init__(self, id, pos, goal, embarque=None, chegada=None):
         self.id = id
         self.pos = pos
         self.goal = goal
+        self.embarque = embarque
+        self.chegada = chegada
 
     def create_point(self, ax):
         self.pos_graph = ax.scatter(self.pos[0], self.pos[1], s=20, zorder=2, c='red')
         return self.pos_graph
-    def update_graph(self, new_pos, ax):
+    def update_graph(self, figure, new_pos, ax):
         self.pos_graph.set_offsets(np.c_[new_pos[0], new_pos[1]])
         figure.canvas.draw()
         figure.canvas.flush_events()
 
+    def remove_graph(self, situation):
+        if situation == True:
+            self.pos_graph.remove()
+
 class carro:
-    def __init__(self, id, pos):
+    def __init__(self, id, pos, cliente=None, passageiro=False):
         self.id = id
         self.pos = pos
+        self.cliente = cliente
+        self.passageiro = passageiro
 
     def create_point(self, ax):
         self.pos_graph = ax.scatter(self.pos[0], self.pos[1], s=20, zorder=2, c='blue')
@@ -29,6 +37,10 @@ class carro:
         self.pos_graph.set_offsets(np.c_[new_pos[0], new_pos[1]])
         figure.canvas.draw()
         figure.canvas.flush_events()
+
+    def remove_graph(self, situation):
+        if situation == None:
+            self.pos_graph.remove()
 
 def draw_map():
     mapa = np.ones((101, 101))
@@ -45,7 +57,7 @@ def manhattan_distance(pos1, pos2):
 def find_path(start, goal, mapa):
     path = []
     current_pos = start
-    ruas = [0, 20, 40, 60, 80, 100]
+    ruas = np.array([0, 20, 40, 60, 80, 100])
     flag = [True, True]
 
     while not np.array_equal(current_pos, goal):
@@ -92,27 +104,52 @@ def random_pos(matriz):
 
 plt.ion()
 
-cliente1 = cliente(321, np.array([45, 60]), np.array([2, 2]))
 flag = True
 
 figure, ax, mapa = draw_map()
 
-n_carros = 3
-carros = []
-carros_path = []
-
-for i in range(n_carros):
-    carros.append(carro(np.random.randint(100), random_pos(mapa)))
-
-cliente1.create_point(ax)
-for n, j in enumerate(carros):
-    j.create_point(ax)
-    carros_path.append(find_path(carros[n].pos, cliente1.pos, mapa))
-
 while flag:
-    for i, j in zip(carros, carros_path):
-        for k in j:
-            i.pos = np.array(k)
-            i.update_graph(figure, k, ax)
-            time.sleep(0.1)
+    new_client = np.random.choice([True, False])
+    clientes = []
+
+    if new_client:
+        clientes.append(cliente(np.random.randint(100), random_pos(mapa), random_pos(mapa)))
+    for i in clientes:
+        i.create_point(ax)
+
+    n_carros = len(clientes)
+    carros = []
+    carros_path = []
+    carros_destino = []
+
+    for i in range(n_carros):
+        carros.append(carro(np.random.randint(100), random_pos(mapa)))
+    for n, j in enumerate(carros):
+        j.create_point(ax)
+        carros[n].cliente = clientes[n]
+        carros_path.append(find_path(j.pos, clientes[n].pos, mapa))
+        carros_destino.append(find_path(clientes[n].pos, clientes[n].goal, mapa))
+
+    for car, paths, destinos in zip(carros, carros_path, carros_destino):
+        if not car.passageiro:
+            for p in paths:
+                car.pos = np.array(p)
+                car.update_graph(figure, p, ax)
+            car.passageiro = True
+            car.cliente.embarque = True
+            car.cliente.remove_graph(car.cliente.embarque)
+
+        if car.passageiro:
+            for d in destinos:
+                car.pos = np.array(d)
+                car.cliente.pos = np.array(d)
+                car.update_graph(figure, d, ax)
+            car.passageiro = False
+            car.cliente.chegada = True
+            car.cliente = None
+            car.remove_graph(car.cliente)
+
+
+
+
 
