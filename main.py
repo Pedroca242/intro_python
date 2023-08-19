@@ -1,5 +1,6 @@
 import numpy as np
 import time
+import concurrent.futures
 import matplotlib.pyplot as plt
 
 class cliente:
@@ -18,8 +19,8 @@ class cliente:
         figure.canvas.draw()
         figure.canvas.flush_events()
 
-    def remove_graph(self, situation):
-        if situation == True:
+    def remove_graph(self):
+        if self.embarque == True:
             self.pos_graph.remove()
 
 class carro:
@@ -28,9 +29,11 @@ class carro:
         self.pos = pos
         self.cliente = cliente
         self.passageiro = passageiro
+        self.have_point = None
 
     def create_point(self, ax):
         self.pos_graph = ax.scatter(self.pos[0], self.pos[1], s=20, zorder=2, c='blue')
+        self.have_point = True
         return self.pos_graph
 
     def update_graph(self, figure, new_pos, ax):
@@ -108,27 +111,34 @@ flag = True
 
 figure, ax, mapa = draw_map()
 
+n_carros = 5
+carros = []
+
+
 while flag:
     new_client = np.random.choice([True, False])
+    n_clientes = np.random.randint(0, 5)
     clientes = []
 
-    if new_client:
-        clientes.append(cliente(np.random.randint(100), random_pos(mapa), random_pos(mapa)))
-    for i in clientes:
-        i.create_point(ax)
-
-    n_carros = len(clientes)
-    carros = []
     carros_path = []
     carros_destino = []
 
-    for i in range(n_carros):
-        carros.append(carro(np.random.randint(100), random_pos(mapa)))
-    for n, j in enumerate(carros):
-        j.create_point(ax)
-        carros[n].cliente = clientes[n]
-        carros_path.append(find_path(j.pos, clientes[n].pos, mapa))
-        carros_destino.append(find_path(clientes[n].pos, clientes[n].goal, mapa))
+    if new_client:
+        for c in range(n_clientes):
+            clientes.append(cliente(np.random.randint(100), random_pos(mapa), random_pos(mapa)))
+    for i in clientes:
+        i.create_point(ax)
+
+    if len(carros) == 0:
+        for i in range(n_carros):
+            carros.append(carro(np.random.randint(100), random_pos(mapa)))
+
+    for car, client in zip(carros, clientes):
+        if not car.have_point:
+            car.create_point(ax)
+        car.cliente = client
+        carros_path.append(find_path(car.pos, client.pos, mapa))
+        carros_destino.append(find_path(client.pos, client.goal, mapa))
 
     for car, paths, destinos in zip(carros, carros_path, carros_destino):
         if not car.passageiro:
@@ -137,7 +147,7 @@ while flag:
                 car.update_graph(figure, p, ax)
             car.passageiro = True
             car.cliente.embarque = True
-            car.cliente.remove_graph(car.cliente.embarque)
+            car.cliente.remove_graph()
 
         if car.passageiro:
             for d in destinos:
@@ -146,8 +156,7 @@ while flag:
                 car.update_graph(figure, d, ax)
             car.passageiro = False
             car.cliente.chegada = True
-            car.cliente = None
-            car.remove_graph(car.cliente)
+
 
 
 
