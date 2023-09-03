@@ -1,11 +1,8 @@
 import numpy as np
-import time
-import concurrent.futures
 import matplotlib.pyplot as plt
 
-class cliente:
-    def __init__(self, id, pos, goal, embarque=None, chegada=None):
-        self.id = id
+class Cliente:
+    def __init__(self, pos, goal, embarque=None, chegada=None):
         self.pos = pos
         self.goal = goal
         self.embarque = embarque
@@ -23,9 +20,8 @@ class cliente:
         if self.embarque == True:
             self.pos_graph.remove()
 
-class carro:
-    def __init__(self, id, pos, cliente=None, passageiro=False):
-        self.id = id
+class Carro:
+    def __init__(self, pos, cliente=None, passageiro=False):
         self.pos = pos
         self.cliente = cliente
         self.passageiro = passageiro
@@ -45,54 +41,79 @@ class carro:
         if situation == None:
             self.pos_graph.remove()
 
-def draw_map():
-    mapa = np.ones((101, 101))
+class Setup:
+
+    def __init__(self, n_carros, ruas):
+        self.mapa = self.gerar_mapa()
+        self.carros = [Carro(random_pos(self.mapa)) for i in range(n_carros)]
+        self.ruas = ruas
+
+    def gerar_clientes(self, max_clientes):
+        n_clientes = np.random.randint(max_clientes)
+        clientes = [Cliente(random_pos(self.mapa), random_pos(self.mapa)) for i in range(n_clientes)]
+        return clientes
+
+    def gerar_mapa(self):
+        mapa = np.ones((101, 101))
+        for i in self.ruas:
+            mapa[i, :] = 0
+            mapa[:, i] = 0
+        return mapa
+
+
+class Central_de_controle:
+
+    def __init__(self, carros, clientes, ruas):
+        self.carros = carros
+        self.clientes = clientes
+        self.ruas = ruas
+
+    def find_path(self, start, goal):
+        path = []
+        current_pos = start
+        flag = [True, True]
+
+        while not np.array_equal(current_pos, goal):
+            if current_pos[0] in self.ruas and flag[0]:
+                if current_pos[1] < self.ruas[np.absolute(self.ruas - goal[1]).argmin()]:
+                    current_pos[1] += 1
+                elif current_pos[1] > self.ruas[np.absolute(self.ruas - goal[1]).argmin()]:
+                    current_pos[1] -= 1
+                else:
+                    while current_pos[0] != goal[0]:
+                        if current_pos[0] < goal[0]:
+                            current_pos[0] += 1
+                        elif current_pos[0] > goal[0]:
+                            current_pos[0] -= 1
+                        path.append([current_pos[0], current_pos[1]])
+                    flag[0] = False
+            elif current_pos[1] in self.ruas and flag[1]:
+                if current_pos[0] < self.ruas[np.absolute(self.ruas - goal[0]).argmin()]:
+                    current_pos[0] += 1
+                elif current_pos[0] > self.ruas[np.absolute(self.ruas - goal[0]).argmin()]:
+                    current_pos[0] -= 1
+                else:
+                    while current_pos[1] != goal[1]:
+                        if current_pos[1] < goal[1]:
+                            current_pos[1] += 1
+                        elif current_pos[1] > goal[1]:
+                            current_pos[1] -= 1
+                        path.append([current_pos[0], current_pos[1]])
+                    flag[1] = False
+
+            path.append([current_pos[0], current_pos[1]])
+        return path
+    
+
+def draw_map(mapa):
     figure, ax = plt.subplots(figsize=(5,5))
-    for i in range(0, 120, 20):
-        mapa[i, :] = 0
-        mapa[:, i] = 0
     ax.imshow(mapa, cmap = 'gray_r', vmin = 0, vmax = 1,origin='lower')
-    return figure, ax, mapa
+    return figure, ax
 
 def manhattan_distance(pos1, pos2):
     return abs(pos2[0] - pos1[0]) + abs(pos2[1] - pos1[1])
 
-def find_path(start, goal, mapa):
-    path = []
-    current_pos = start
-    ruas = np.array([0, 20, 40, 60, 80, 100])
-    flag = [True, True]
 
-    while not np.array_equal(current_pos, goal):
-        if current_pos[0] in ruas and flag[0]:
-            if current_pos[1] < ruas[np.absolute(ruas - goal[1]).argmin()]:
-                current_pos[1] += 1
-            elif current_pos[1] > ruas[np.absolute(ruas - goal[1]).argmin()]:
-                current_pos[1] -= 1
-            else:
-                while current_pos[0] != goal[0]:
-                    if current_pos[0] < goal[0]:
-                        current_pos[0] += 1
-                    elif current_pos[0] > goal[0]:
-                        current_pos[0] -= 1
-                    path.append([current_pos[0], current_pos[1]])
-                flag[0] = False
-        elif current_pos[1] in ruas and flag[1]:
-            if current_pos[0] < ruas[np.absolute(ruas - goal[0]).argmin()]:
-                current_pos[0] += 1
-            elif current_pos[0] > ruas[np.absolute(ruas - goal[0]).argmin()]:
-                current_pos[0] -= 1
-            else:
-                while current_pos[1] != goal[1]:
-                    if current_pos[1] < goal[1]:
-                        current_pos[1] += 1
-                    elif current_pos[1] > goal[1]:
-                        current_pos[1] -= 1
-                    path.append([current_pos[0], current_pos[1]])
-                flag[1] = False
-
-        path.append([current_pos[0], current_pos[1]])
-    return path
 
 def random_pos(matriz):
     linhas = len(matriz)
@@ -107,56 +128,12 @@ def random_pos(matriz):
 
 plt.ion()
 
-flag = True
+ruas = np.array([0, 20, 40, 60, 80, 100])
 
-figure, ax, mapa = draw_map()
+config = Setup(5, ruas)
+figure, ax = draw_map(config.mapa)
 
-n_carros = 5
-carros = []
-
-
-while flag:
-    new_client = np.random.choice([True, False])
-    n_clientes = np.random.randint(0, 5)
-    clientes = []
-
-    carros_path = []
-    carros_destino = []
-
-    if new_client:
-        for c in range(n_clientes):
-            clientes.append(cliente(np.random.randint(100), random_pos(mapa), random_pos(mapa)))
-    for i in clientes:
-        i.create_point(ax)
-
-    if len(carros) == 0:
-        for i in range(n_carros):
-            carros.append(carro(np.random.randint(100), random_pos(mapa)))
-
-    for car, client in zip(carros, clientes):
-        if not car.have_point:
-            car.create_point(ax)
-        car.cliente = client
-        carros_path.append(find_path(car.pos, client.pos, mapa))
-        carros_destino.append(find_path(client.pos, client.goal, mapa))
-
-    for car, paths, destinos in zip(carros, carros_path, carros_destino):
-        if not car.passageiro:
-            for p in paths:
-                car.pos = np.array(p)
-                car.update_graph(figure, p, ax)
-            car.passageiro = True
-            car.cliente.embarque = True
-            car.cliente.remove_graph()
-
-        if car.passageiro:
-            for d in destinos:
-                car.pos = np.array(d)
-                car.cliente.pos = np.array(d)
-                car.update_graph(figure, d, ax)
-            car.passageiro = False
-            car.cliente.chegada = True
-
+central = Central_de_controle(config.carros, config.gerar_clientes(5), ruas=ruas)
 
 
 
