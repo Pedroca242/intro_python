@@ -12,5 +12,4 @@ class Cliente:
         return self.pos_graph
 
     def remove_graph(self):
-        if self.embarque == True:
-            self.pos_graph.remove()
+        self.pos_graph.set_visible(False)

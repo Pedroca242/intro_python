@@ -26,20 +26,36 @@ for i, j in zip(central.clientes, central.carros):
     i.create_point(ax)
     j.create_point(ax)
 
+comms.new_client()
+
 while True:
-    comms.new_client()
     comms.send_path()
 
-    for i in central.carros:
-        try:
-            i.update_graph(figure)
-        except StopIteration:
-            i.cliente = None
-            i.path = None
+    central.carros[0].update_graph(figure)
+    print(central.carros[0].pos, central.carros[0].cliente.goal)
+    print(central.carros[0].passageiro)
+    figure.canvas.draw()
+    figure.canvas.flush_events()
 
 
-    for i in central.clientes:
-        i.need_ride = True
+
+    # for i in central.carros:
+    #     i.update_graph(figure)
+    #     print(i.passageiro)
+    #     figure.canvas.draw()
+    #     figure.canvas.flush_events()
+
+    # for i in central.carros:
+    #     try:
+    #         i.update_graph(figure)
+    #     except StopIteration:
+    #         i.cliente = None
+    #         i.path = None
+    #     figure.canvas.draw()
+    #     figure.canvas.flush_events()
+
+    # for i in central.clientes:
+    #     i.need_ride = True
 
 
 

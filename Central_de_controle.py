@@ -41,4 +41,5 @@ class Central_de_controle:
                     flag[1] = False
 
             path.append([current_pos[0], current_pos[1]])
+        print(path)
         return path

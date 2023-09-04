@@ -7,6 +7,7 @@ class Carro:
         self.cliente = None
         self.passageiro = passageiro
         self.path = None
+        self.path_list = None
         self.have_point = None
 
     def create_point(self, ax):
@@ -15,12 +16,27 @@ class Carro:
         return self.pos_graph
 
     def update_graph(self, figure):
-        if self.path:
-            new_pos = next(self.path)
+        if self.path is not None:
+            try:
+                new_pos = next(self.path)
+            except StopIteration:
+                new_pos = self.pos
+
             self.pos = new_pos
+
+            if self.cliente is not None:
+                if self.pos == self.cliente.pos:
+                    self.passageiro = True
+
+                if self.passageiro:
+                    self.cliente.pos = self.pos
+
+                if self.pos == self.cliente.goal:
+                    self.cliente = None
+                    self.passageiro = False
+
             self.pos_graph.set_offsets(np.c_[new_pos[0], new_pos[1]])
-            figure.canvas.draw()
-            figure.canvas.flush_events()
+
 
     def remove_graph(self, situation):
         if situation == None:
