@@ -31,19 +31,13 @@ comms.new_client()
 while True:
     comms.send_path()
 
-    central.carros[0].update_graph(figure)
-    print(central.carros[0].pos, central.carros[0].cliente.goal)
-    print(central.carros[0].passageiro)
-    figure.canvas.draw()
-    figure.canvas.flush_events()
+    for i in central.carros:
+        i.update_graph()
+        figure.canvas.draw()
+        figure.canvas.flush_events()
 
-
-
-    # for i in central.carros:
-    #     i.update_graph(figure)
-    #     print(i.passageiro)
-    #     figure.canvas.draw()
-    #     figure.canvas.flush_events()
+    test = [i.passageiro for i in central.carros]
+    print(test)
 
     # for i in central.carros:
     #     try:
