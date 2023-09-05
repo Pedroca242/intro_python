@@ -9,12 +9,10 @@ class Comunicacao:
     def send_path(self):
         for i in self.central.carros:
             if i.path is None and not i.passageiro and i.cliente:
-                i.path = iter(self.central.find_path(i.pos, i.cliente.pos))
+                i.path = iter(self.central.find_path(i, i.cliente.pos))
             elif i.passageiro and i.path is None:
                 i.cliente.remove_graph()
-                i.path = iter(self.central.find_path(i.pos, i.cliente.goal))
-
-
+                i.path = iter(self.central.find_path(i, i.cliente.goal))
 
     def new_client(self):
         for cliente in self.central.clientes:
