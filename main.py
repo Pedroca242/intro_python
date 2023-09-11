@@ -1,5 +1,4 @@
 import numpy as np
-import time
 import matplotlib.pyplot as plt
 from Setup import Setup
 from Comunicacao import Comunicacao
@@ -29,7 +28,7 @@ comms.new_client()
 
 while True:
     comms.send_path()
-
+    
     for i in central.carros:
         i.update_graph()
 
@@ -38,18 +37,3 @@ while True:
 
     test = [i.passageiro for i in central.carros]
     print(test)
-
-    # for i in central.carros:
-    #     try:
-    #         i.update_graph(figure)
-    #     except StopIteration:
-    #         i.cliente = None
-    #         i.path = None
-    #     figure.canvas.draw()
-    #     figure.canvas.flush_events()
-
-    # for i in central.clientes:
-    #     i.need_ride = True
-
-
-

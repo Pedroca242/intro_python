@@ -6,7 +6,8 @@ class Carro:
         self.pos = pos
         self.cliente = None
         self.passageiro = passageiro
-        self.speed = 10
+        self.speed = 12.5
+        self.last_speed = self.speed
         self.path = None
         self.have_point = None
 
