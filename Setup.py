@@ -13,11 +13,12 @@ class Setup:
 
     def gerar_clientes(self, max_clientes):
         n_clientes = max_clientes
-        clientes = [Cliente(random_pos(self.mapa), random_pos(self.mapa)) for i in range(n_clientes)]
+        # clientes = [Cliente(random_pos(self.mapa), random_pos(self.mapa)) for i in range(n_clientes)]
+        clientes = [Cliente([20, 20], random_pos(self.mapa)) for i in range(n_clientes)]
         return clientes
 
     def gerar_mapa(self):
-        mapa = np.ones((101, 101))
+        mapa = np.ones((self.ruas[-1]+1, self.ruas[-1]+1))
         for i in self.ruas:
             mapa[i, :] = 0
             mapa[:, i] = 0

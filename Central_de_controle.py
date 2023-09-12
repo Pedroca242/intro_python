@@ -64,6 +64,32 @@ class Central_de_controle:
             path.append([current_pos[0], current_pos[1]])
         return path
 
+    def dont_collide(self):
+        for i in self.carros:
+            verify = []
+            i_path = list(i.path)
+            if i.pos[0] in self.ruas:
+                rua_proxima = self.ruas[np.absolute(self.ruas - i.pos[1]).argmin()]
+                for j in self.carros:
+                    flag = False
+                    j_path = list(j.path)
+                    for p1, p2 in zip(i_path[i_path.index(i.pos): i_path.index(i.pos)+5], j_path[j_path.index(j.pos): i_path.index(j.pos)+5]):
+                        if p1 == p2:
+                            flag = True
+                    if rua_proxima in j.pos and flag:
+                        i.last_speed = i.speed
+                        i.speed = i.speed - manhattan_distance(i.pos, j.pos)*0.5
+                        flag = False
+                    else:
+                        verify.append(True)
+                if any(verify):
+                    i.last_speed = i.speed
+                    i.speed = i.default_speed
+
+
+
+
+
 
 def manhattan_distance(pos1, pos2):
     return abs(pos2[0] - pos1[0]) + abs(pos2[1] - pos1[1])

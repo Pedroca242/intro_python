@@ -6,7 +6,8 @@ class Carro:
         self.pos = pos
         self.cliente = None
         self.passageiro = passageiro
-        self.speed = 12.5
+        self.speed = 20
+        self.default_speed = 10
         self.last_speed = self.speed
         self.path = None
         self.have_point = None
@@ -34,10 +35,12 @@ class Carro:
                     self.cliente.pos = self.pos
 
                 if self.pos == self.cliente.goal:
+                    self.cliente.need_ride = True
                     self.cliente = None
                     self.passageiro = False
 
-            self.pos_graph.set_offsets(np.c_[new_pos[0], new_pos[1]])
+            if self.have_point:
+                self.pos_graph.set_offsets(np.c_[new_pos[0], new_pos[1]])
 
 
     def remove_graph(self, situation):

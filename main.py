@@ -11,7 +11,9 @@ def draw_map(mapa):
 
 plt.ion()
 
-ruas = np.array([0, 20, 40, 60, 80, 100])
+n_ruas = 6
+
+ruas = np.array([i for i in range(0, n_ruas*20, 20)])
 
 config = Setup(5, ruas)
 figure, ax = draw_map(config.mapa)
