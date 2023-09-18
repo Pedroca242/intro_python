@@ -28,15 +28,7 @@ for i, j in zip(central.clientes, central.carros):
 
 comms.new_client()
 
-# print(central.carros[0].pos, central.clientes[0].pos)
-# print(central.find_waypoint(central.carros[0], central.clientes[0].pos))
-# central.carros[0].way_point = central.find_waypoint(central.carros[0], central.clientes[0].pos)
-# central.next_move(central.carros[0])
-# print(central.carros[0].pos)
-# print(central.find_waypoint(central.carros[0], central.clientes[0].pos))
-
 while True:
-    comms.send_waypoint()
     comms.send_move()
     
     for i in central.carros:

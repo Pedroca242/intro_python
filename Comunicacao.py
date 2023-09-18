@@ -6,24 +6,27 @@ class Comunicacao:
         self.central = central
         self.carros = carros
 
-    def send_waypoint(self):
-        for i in self.central.carros:
-            if i.cliente and not i.passageiro:
-                i.way_point = self.central.find_waypoint(i, i.cliente.pos)
-            elif i.cliente and i.passageiro:
-                i.way_point = self.central.find_waypoint(i, i.cliente.goal)
-            else:
-                i.way_point = i.pos
+    def send_waypoint(self, carro):
+        if not carro.passageiro:
+            carro.way_point = self.central.find_waypoint(carro, carro.cliente.pos)
+        elif carro.passageiro:
+            carro.way_point = self.central.find_waypoint(carro, carro.cliente.goal)
 
     def send_move(self):
         for i in self.central.carros:
-            if i.way_point != i.pos and i.cliente is not None:
-                self.central.next_move(i)
+            if i.cliente is not None:
+                if i.way_point is None:
+                    self.send_waypoint(i)
                 if i.pos == i.cliente.pos:
                     i.passageiro = True
+                    i.cliente.remove_graph()
                 if i.pos == i.cliente.goal:
                     i.cliente = None
                     i.passageiro = False
+                if i.pos == i.way_point and i.cliente is not None:
+                    self.send_waypoint(i)
+                self.central.next_move(i)
+
 
 
 

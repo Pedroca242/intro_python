@@ -1,5 +1,4 @@
 import numpy as np
-import itertools
 
 class Central_de_controle:
 
@@ -18,46 +17,33 @@ class Central_de_controle:
             way_point = [carro.pos[0], rua_proxima_y]
         elif carro.pos[1] in self.ruas and carro.pos[0] != rua_proxima_x:
             way_point = [rua_proxima_x, carro.pos[1]]
-        elif carro.pos[0] == rua_proxima_x and carro.pos[1] == rua_proxima_y:
+
+        if carro.pos[0] == rua_proxima_x and carro.pos[1] == rua_proxima_y:
             way_point = goal
 
         return way_point
 
     def next_move(self, carro):
         delta_s = carro.speed*self.delta_t
-        if carro.pos != carro.way_point:
-            if carro.pos[0] < carro.way_point[0]:
-                if delta_s > manhattan_distance(carro.pos, carro.way_point):
-                    carro.pos = carro.way_point
-                else:
-                    carro.pos[0] += delta_s
-            elif carro.pos[0] > carro.way_point[0]:
-                if delta_s > manhattan_distance(carro.pos, carro.way_point):
-                    carro.pos = carro.way_point
-                else:
-                    carro.pos[0] -= delta_s
-            elif carro.pos[1] < carro.way_point[1]:
-                if delta_s > manhattan_distance(carro.pos, carro.way_point):
-                    carro.pos = carro.way_point
-                else:
-                    carro.pos[1] += delta_s
-            elif carro.pos[1] > carro.way_point[1]:
-                if delta_s > manhattan_distance(carro.pos, carro.way_point):
-                    carro.pos = carro.way_point
-                else:
-                    carro.pos[1] -= delta_s
+        if carro.pos[0] < carro.way_point[0]:
+            carro.pos[0] += delta_s
+            if delta_s > abs(carro.pos[0] - carro.way_point[0]):
+                carro.pos[0] = carro.way_point[0]
+        elif carro.pos[0] > carro.way_point[0]:
+            carro.pos[0] -= delta_s
+            if delta_s > abs(carro.pos[0] - carro.way_point[0]):
+                carro.pos[0] = carro.way_point[0]
+        elif carro.pos[1] < carro.way_point[1]:
+            carro.pos[1] += delta_s
+            if delta_s > abs(carro.pos[1] - carro.way_point[1]):
+                carro.pos[1] = carro.way_point[1]
+        elif carro.pos[1] > carro.way_point[1]:
+            carro.pos[1] -= delta_s
+            if delta_s > abs(carro.pos[1] - carro.way_point[1]):
+                carro.pos[1] = carro.way_point[1]
 
 
 
 
 def manhattan_distance(pos1, pos2):
     return abs(pos2[0] - pos1[0]) + abs(pos2[1] - pos1[1])
-
-def find_nearest(pontos, pos):
-    min = float("inf")
-    nearest = pos
-    for i in pontos:
-        if manhattan_distance(i, pos) < min:
-            min = manhattan_distance(i, pos)
-            nearest = i
-    return nearest
