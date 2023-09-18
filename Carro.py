@@ -6,10 +6,10 @@ class Carro:
         self.pos = pos
         self.cliente = None
         self.passageiro = passageiro
-        self.speed = 20
+        self.speed = 10
         self.default_speed = 10
         self.last_speed = self.speed
-        self.path = None
+        self.way_point = None
         self.have_point = None
 
     def create_point(self, ax):
@@ -18,29 +18,7 @@ class Carro:
         return self.pos_graph
 
     def update_graph(self):
-        if self.path is not None:
-            try:
-                new_pos = next(self.path)
-            except StopIteration:
-                new_pos = self.pos
-                self.path = None
-
-            self.pos = new_pos
-
-            if self.cliente is not None:
-                if self.pos == self.cliente.pos:
-                    self.passageiro = True
-
-                if self.passageiro:
-                    self.cliente.pos = self.pos
-
-                if self.pos == self.cliente.goal:
-                    self.cliente.need_ride = True
-                    self.cliente = None
-                    self.passageiro = False
-
-            if self.have_point:
-                self.pos_graph.set_offsets(np.c_[new_pos[0], new_pos[1]])
+        self.pos_graph.set_offsets(np.c_[self.pos[0], self.pos[1]])
 
 
     def remove_graph(self, situation):
