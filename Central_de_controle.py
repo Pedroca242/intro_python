@@ -25,22 +25,27 @@ class Central_de_controle:
 
     def next_move(self, carro):
         delta_s = carro.speed*self.delta_t
-        if carro.pos[0] < carro.way_point[0]:
-            carro.pos[0] += delta_s
-            if delta_s > abs(carro.pos[0] - carro.way_point[0]):
-                carro.pos[0] = carro.way_point[0]
-        elif carro.pos[0] > carro.way_point[0]:
-            carro.pos[0] -= delta_s
-            if delta_s > abs(carro.pos[0] - carro.way_point[0]):
-                carro.pos[0] = carro.way_point[0]
-        elif carro.pos[1] < carro.way_point[1]:
-            carro.pos[1] += delta_s
-            if delta_s > abs(carro.pos[1] - carro.way_point[1]):
-                carro.pos[1] = carro.way_point[1]
-        elif carro.pos[1] > carro.way_point[1]:
-            carro.pos[1] -= delta_s
-            if delta_s > abs(carro.pos[1] - carro.way_point[1]):
-                carro.pos[1] = carro.way_point[1]
+        if carro.pos != carro.way_point:
+            if carro.pos[0] < carro.way_point[0]:
+                if delta_s > abs(carro.pos[0] - carro.way_point[0]):
+                    carro.pos[0] = carro.way_point[0]
+                else:
+                    carro.pos[0] += delta_s
+            elif carro.pos[0] > carro.way_point[0]:
+                if delta_s > abs(carro.pos[0] - carro.way_point[0]):
+                    carro.pos[0] = carro.way_point[0]
+                else:
+                    carro.pos[0] -= delta_s
+            elif carro.pos[1] < carro.way_point[1]:
+                if delta_s > abs(carro.pos[1] - carro.way_point[1]):
+                    carro.pos[1] = carro.way_point[1]
+                else:
+                    carro.pos[1] += delta_s
+            elif carro.pos[1] > carro.way_point[1]:
+                if delta_s > abs(carro.pos[1] - carro.way_point[1]):
+                    carro.pos[1] = carro.way_point[1]
+                else:
+                    carro.pos[1] -= delta_s
 
 
 
