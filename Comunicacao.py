@@ -17,14 +17,21 @@ class Comunicacao:
             if i.cliente is not None:
                 if i.way_point is None:
                     self.send_waypoint(i)
+
                 if i.pos == i.cliente.pos:
                     i.passageiro = True
                     i.cliente.remove_graph()
-                if i.pos == i.cliente.goal:
+
+                if i.passageiro == True:
+                    i.cliente.pos = i.pos
+
+                if i.pos == i.cliente.goal and i.cliente.pos == i.cliente.goal:
                     i.cliente = None
                     i.passageiro = False
+
                 if i.pos == i.way_point and i.cliente is not None:
                     self.send_waypoint(i)
+                self.central.dont_collide(i)
                 self.central.next_move(i)
 
 

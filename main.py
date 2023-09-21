@@ -33,10 +33,10 @@ while True:
     
     for i in central.carros:
         i.update_graph()
-        print(i.pos, i.way_point)
+        print(i.cliente)
 
     figure.canvas.draw()
     figure.canvas.flush_events()
 
     test = [i.passageiro for i in central.carros]
-    print(test)
+

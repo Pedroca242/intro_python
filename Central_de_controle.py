@@ -25,7 +25,7 @@ class Central_de_controle:
 
     def next_move(self, carro):
         delta_s = carro.speed*self.delta_t
-        if carro.pos != carro.way_point:
+        if not np.array_equal(carro.pos, carro.way_point):
             if carro.pos[0] < carro.way_point[0]:
                 if delta_s > abs(carro.pos[0] - carro.way_point[0]):
                     carro.pos[0] = carro.way_point[0]
@@ -46,6 +46,16 @@ class Central_de_controle:
                     carro.pos[1] = carro.way_point[1]
                 else:
                     carro.pos[1] -= delta_s
+
+    def dont_collide(self, carro):
+        for i in self.carros:
+            if carro.way_point == i.way_point and manhattan_distance(carro.pos, i.pos) <= 10 and carro != i:
+                carro.last_speed = carro.speed
+                carro.speed = carro.speed/2
+            else:
+                carro.last_speed = carro.speed
+                carro.speed = carro.default_speed
+
 
 
 
