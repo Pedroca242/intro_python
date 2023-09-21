@@ -49,15 +49,24 @@ class Central_de_controle:
 
     def dont_collide(self, carro):
         for i in self.carros:
-            if carro.way_point == i.way_point and manhattan_distance(carro.pos, i.pos) <= 10 and carro != i:
-                carro.last_speed = carro.speed
-                carro.speed = carro.speed/2
-            else:
-                carro.last_speed = carro.speed
-                carro.speed = carro.default_speed
+            if i.way_point is not None:
+                distancia_way_point = abs(manhattan_distance(carro.pos, carro.way_point) - manhattan_distance(i.pos, i.way_point))
 
-
-
+                if (carro.way_point == i.way_point and  distancia_way_point <= 2
+                        and manhattan_distance(carro.pos, i.pos) <= 20 and carro.speed == i.default_speed
+                        and i.speed == i.default_speed and carro != i and carro.pos[0] != i.pos[0] and carro.pos[1] != i.pos[1]):
+                    carro.last_speed = carro.speed
+                    carro.speed = carro.default_speed*0.50
+                    for c in self.carros:
+                        if c.pos[0] == carro.pos[0] or c.pos[1] == carro.pos[1] and manhattan_distance(c.pos, carro.pos) <= 15:
+                            c.last_speed = c.speed
+                            c.speed = carro.speed
+                        else:
+                            c.last_speed = c.speed
+                            c.speed = c.default_speed
+                elif carro.way_point != i.way_point and carro.speed != carro.default_speed and carro != i:
+                    carro.last_speed = carro.speed
+                    carro.speed = carro.default_speed
 
 
 def manhattan_distance(pos1, pos2):
