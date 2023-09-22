@@ -14,8 +14,8 @@ class Setup:
     def gerar_clientes(self, max_clientes):
         n_clientes = max_clientes
         # clientes = [Cliente(random_pos(self.mapa), random_pos(self.mapa)) for i in range(n_clientes)]
-        clientes = [Cliente(random_pos(self.mapa), random_pos(self.mapa)) for i in range(n_clientes)]
-        return clientes
+        self.clientes = [Cliente(random_pos(self.mapa), random_pos(self.mapa)) for i in range(n_clientes)]
+        return self.clientes
 
     def gerar_mapa(self):
         mapa = np.ones((self.ruas[-1]+1, self.ruas[-1]+1))
@@ -23,6 +23,11 @@ class Setup:
             mapa[i, :] = 0
             mapa[:, i] = 0
         return mapa
+
+    def new_goal(self):
+        for i in self.clientes:
+            if i.need_ride == True:
+                i.goal = random_pos(self.mapa)
 
 def random_pos(matriz):
     linhas = len(matriz)

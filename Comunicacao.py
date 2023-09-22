@@ -1,5 +1,6 @@
 import numpy as np
 
+
 class Comunicacao:
 
     def __init__(self, central, carros):
@@ -35,7 +36,10 @@ class Comunicacao:
                 self.central.next_move(i)
 
 
-
+    # def need_ride(self, cliente, n, ax):
+    #     if n == 100:
+    #         cliente.need_ride = True
+    #         cliente.create_point(ax)
 
     def new_client(self):
         for cliente in self.central.clientes:

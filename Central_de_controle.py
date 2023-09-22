@@ -64,9 +64,17 @@ class Central_de_controle:
                         else:
                             c.last_speed = c.speed
                             c.speed = c.default_speed
+                # elif carro.pos[0] in self.ruas and carro.pos[0] == i.pos[0] and abs(carro.pos[1] - i.pos[1]) <= 5 and carro != i \
+                #         and carro.speed == carro.default_speed and i.speed == i.default_speed:
+                #     carro.last_speed = carro.speed
+                #     carro.speed = carro.speed * 0.50
+                # elif carro.pos[1] in self.ruas and carro.pos[1] == i.pos[1] and abs(carro.pos[0] - i.pos[0]) <= 5 and carro != i:
+                #     carro.last_speed = carro.speed
+                #     carro.speed = carro.speed * 0.50
                 elif carro.way_point != i.way_point and carro.speed != carro.default_speed and carro != i:
                     carro.last_speed = carro.speed
                     carro.speed = carro.default_speed
+
 
 
 def manhattan_distance(pos1, pos2):

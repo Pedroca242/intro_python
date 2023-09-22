@@ -26,9 +26,9 @@ for i, j in zip(central.clientes, central.carros):
     i.create_point(ax)
     j.create_point(ax)
 
-comms.new_client()
-
 while True:
+    config.new_goal()
+    comms.new_client()
     comms.send_move()
     
     for i in central.carros:
@@ -39,4 +39,5 @@ while True:
     figure.canvas.flush_events()
 
     test = [i.passageiro for i in central.carros]
+
 
