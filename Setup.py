@@ -29,6 +29,9 @@ class Setup:
             if i.need_ride == True:
                 i.goal = random_pos(self.mapa)
 
+
+
+
 def random_pos(matriz):
     linhas = len(matriz)
     colunas = len(matriz[0])

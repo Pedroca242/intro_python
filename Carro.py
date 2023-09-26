@@ -20,7 +20,10 @@ class Carro:
     def update_graph(self):
         self.pos_graph.set_offsets(np.c_[self.pos[0], self.pos[1]])
 
+    def show_point(self):
+        self.pos_graph.set_offsets(np.c_[self.pos[0], self.pos[1]])
+        self.pos_graph.set_visible(True)
 
-    def remove_graph(self, situation):
-        if situation == None:
-            self.pos_graph.remove()
+    def remove_graph(self):
+        if self.have_point:
+            self.pos_graph.set_visible(False)

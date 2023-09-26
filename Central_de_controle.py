@@ -75,6 +75,8 @@ class Central_de_controle:
                     carro.last_speed = carro.speed
                     carro.speed = carro.default_speed
 
+    def show_points(self):
+        pass
 
 
 def manhattan_distance(pos1, pos2):

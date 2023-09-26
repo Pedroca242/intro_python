@@ -21,16 +21,18 @@ figure, ax = draw_map(config.mapa)
 central = Central_de_controle(config.carros, config.gerar_clientes(5), ruas=ruas)
 comms = Comunicacao(central, config.carros)
 
-
 for i, j in zip(central.clientes, central.carros):
     i.create_point(ax)
     j.create_point(ax)
 
+
+n = 0
+comms.new_client()
 while True:
+    central.show_points()
     config.new_goal()
-    comms.new_client()
     comms.send_move()
-    
+
     for i in central.carros:
         i.update_graph()
         print(i.cliente)
@@ -38,6 +40,10 @@ while True:
     figure.canvas.draw()
     figure.canvas.flush_events()
 
-    test = [i.passageiro for i in central.carros]
+    test = [i.cliente for i in central.carros]
 
+    n += 1
+    if n == 100:
+        n = 0
+        comms.new_client()
 
