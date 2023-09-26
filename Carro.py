@@ -25,5 +25,4 @@ class Carro:
         self.pos_graph.set_visible(True)
 
     def remove_graph(self):
-        if self.have_point:
-            self.pos_graph.set_visible(False)
+        self.pos_graph.set_visible(False)

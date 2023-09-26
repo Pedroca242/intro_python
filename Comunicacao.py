@@ -16,29 +16,32 @@ class Comunicacao:
     def send_move(self):
         for i in self.central.carros:
             if i.cliente is not None:
+                i.show_point()
                 if i.way_point is None:
                     self.send_waypoint(i)
 
-                if i.pos == i.cliente.pos:
+                if i.pos == i.cliente.pos and i.pos != i.cliente.goal:
                     i.passageiro = True
 
                 if i.passageiro == True:
                     i.cliente.pos = i.pos
+                    i.cliente.remove_graph()
+                else:
+                    i.cliente.pos = i.cliente.pos.copy()
+                    i.cliente.show_point()
 
                 if i.pos == i.cliente.goal and i.cliente.pos == i.cliente.goal:
                     i.cliente.need_ride = True
-                    i.cliente.remove_graph()
                     i.cliente = None
                     i.passageiro = False
-
-                else:
-                    i.show_point()
 
 
                 if i.pos == i.way_point and i.cliente is not None:
                     self.send_waypoint(i)
                 self.central.dont_collide(i)
                 self.central.next_move(i)
+            # else:
+            #     i.remove_graph()
 
     def new_client(self):
         for cliente in self.central.clientes:

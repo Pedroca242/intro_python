@@ -12,13 +12,14 @@ def draw_map(mapa):
 plt.ion()
 
 n_ruas = 6
+n_carros = n_ruas - 1
 
 ruas = np.array([i for i in range(0, n_ruas*20, 20)])
 
-config = Setup(5, ruas)
+config = Setup(n_carros, ruas)
 figure, ax = draw_map(config.mapa)
 
-central = Central_de_controle(config.carros, config.gerar_clientes(5), ruas=ruas)
+central = Central_de_controle(config.carros, config.gerar_clientes(n_carros), ruas=ruas)
 comms = Comunicacao(central, config.carros)
 
 for i, j in zip(central.clientes, central.carros):
@@ -43,7 +44,7 @@ while True:
     test = [i.cliente for i in central.carros]
 
     n += 1
-    if n == 100:
+    if n == 80:
         n = 0
         comms.new_client()
 
