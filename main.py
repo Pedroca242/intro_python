@@ -59,6 +59,21 @@ for cliente in clientes:
     time.sleep(0.1)
     print(clientes[0].pos)
 
+while True:
+    for carro in carros:
+        if "cliente" in carro.comunicador.info:
+            index = int(carro.comunicador.info.split('/')[-1])
+            carro.cliente = clientes[index]
+        if "way_point" in carro.comunicador.info:
+            index = int(carro.comunicador.info.split('/')[-1])
+            way_point = eval(carro.comunicador.info.split('/')[-2])
+            carros[index].way_point = way_point
+
+
+
+
+
+
 
 
 

@@ -73,6 +73,7 @@ class Central_de_controle:
             carro.way_point = self.find_waypoint(carro, carro.cliente.pos)
         elif carro.passageiro:
             carro.way_point = self.find_waypoint(carro, carro.cliente.goal)
+        return carro.way_point
 
     def send_move(self):
         for i in self.carros:

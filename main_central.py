@@ -3,7 +3,7 @@ import logging
 from Comunicacao import MQTTCommunicator
 from Setup import Setup
 import numpy as np
-import matplotlib.pyplot as plt
+import time
 from Carro import Carro
 from Cliente import Cliente
 import json
@@ -35,14 +35,27 @@ setup.comunicador.subscribe("central")
 while True:
     if "Setup" in setup.comunicador.info:
         tipo = setup.comunicador.info.split('/')[1]
-        pos = setup.comunicador.info.split('/')[2]
-        if "carro" in tipo:
-            speed = setup.comunicador.info.split('/')[3]
+        pos = eval(setup.comunicador.info.split('/')[2])
+
+        if "carro" in tipo and 0 in carros:
+            speed = eval(setup.comunicador.info.split('/')[-1])
             carros[int(tipo[-1])] = Carro(pos, speed)
-        if "cliente" in tipo:
-            goal = setup.comunicador.info.split('/')[3]
+        if "cliente" in tipo and 0 in clientes:
+            goal = eval(setup.comunicador.info.split('/')[-1])
             clientes[int(tipo[-1])] = Cliente(pos, goal)
 
+    if 0 not in carros and 0 not in clientes:
+        central = Central_de_controle(carros, clientes, MQTTCommunicator("central", "localhost"), ruas)
+        central.comunicador.subscribe("central")
+        for i in carros:
+            if i.cliente is None:
+                central.new_client()
+                central.comunicador.publish("carro", f'cliente/{clientes.index(i.cliente)}')
+            else:
+                if i.way_point is None or i.pos == i.way_point:
+                    i.way_point = central.send_waypoint(i)
+                    central.comunicador.publish("carro", f'way_point/{i.way_point}/{clientes.index(i.cliente)}')
+                    time.sleep(0.5)
 
 
 
