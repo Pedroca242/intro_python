@@ -2,7 +2,6 @@ import numpy as np
 
 class Cliente:
     def __init__(self, pos, goal, embarque=None):
-        self.id = np.random.randint(134256)
         self.pos = pos
         self.goal = goal
         self.need_ride = True

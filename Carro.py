@@ -2,12 +2,11 @@ import numpy as np
 
 class Carro:
 
-    def __init__(self, pos, passageiro=False):
-        self.id = np.random.randint(134256)
+    def __init__(self, pos, speed=10, passageiro=False):
         self.pos = pos
         self.cliente = None
         self.passageiro = passageiro
-        self.speed = 10
+        self.speed = speed
         self.default_speed = 10
         self.last_speed = self.speed
         self.way_point = None

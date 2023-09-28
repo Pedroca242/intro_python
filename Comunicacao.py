@@ -8,6 +8,7 @@ class MQTTCommunicator:
         self.port = port
         self.client = mqtt.Client(client_id)
         self.connected_clients = []
+        self.info = []
 
         # Configura os callbacks
         self.client.on_connect = self.on_connect
@@ -34,6 +35,7 @@ class MQTTCommunicator:
     def on_message(self, client, userdata, msg):
         mensagem = msg.payload.decode()
         logging.info(f"Recebido no tópico '{msg.topic}': {mensagem}")
+        self.info = mensagem
 
     def publish(self, topic, message, qos=0):
         self.client.publish(topic, message, qos=qos)
