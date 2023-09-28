@@ -1,50 +1,68 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from Setup import Setup
-from Comunicacao import Comunicacao
-from Central_de_controle import Central_de_controle
+from Comunicacao import MQTTCommunicator
+import logging
 
 def draw_map(mapa):
     figure, ax = plt.subplots(figsize=(5,5))
     ax.imshow(mapa, cmap = 'gray_r', vmin = 0, vmax = 1,origin='lower')
     return figure, ax
 
-plt.ion()
-
 n_ruas = 6
 n_carros = n_ruas - 1
 
 ruas = np.array([i for i in range(0, n_ruas*20, 20)])
 
+logging.basicConfig(level=logging.INFO)
+
 config = Setup(n_carros, ruas)
+config.comunicador = MQTTCommunicator("Config_carros", "localhost")
+config.comunicador.start()
+
+
+plt.ion()
 figure, ax = draw_map(config.mapa)
 
-central = Central_de_controle(config.carros, config.gerar_clientes(n_carros), ruas=ruas)
-comms = Comunicacao(central, config.carros)
+carros = config.carros
+clientes = config.gerar_clientes(n_carros)
 
-for i, j in zip(central.clientes, central.carros):
-    i.create_point(ax)
-    j.create_point(ax)
+for carro, cliente, n in zip(carros, clientes, range(n_carros)):
+    cliente.create_point(ax)
+    cliente.comunicador = MQTTCommunicator(f'cliente{n}', "localhost")
+
+    carro.create_point(ax)
+    carro.comunicador = MQTTCommunicator(f'carro{n}', "localhost")
+
+for carro, cliente, n in zip(carros, clientes, range(n_carros)):
+    cliente.comunicador.start()
+    carro.comunicador.start()
+
+    cliente.subscribe("cliente")
+    carro.subscribe("carro")
 
 
-n = 0
-comms.new_client()
+
+    cliente.publish
+
 while True:
-    central.show_points()
-    config.new_goal()
-    comms.send_move()
+    pass
 
-    for i in central.carros:
-        i.update_graph()
-        print(i.cliente)
-
-    figure.canvas.draw()
-    figure.canvas.flush_events()
-
-    test = [i.cliente for i in central.carros]
-
-    n += 1
-    if n == 80:
-        n = 0
-        comms.new_client()
+# while True:
+#     config.new_goal()
+#     for i in clientes:
+#         if i.need_ride == True:
+#             i.comunicador.publish("central", "need ride")
+#
+#     for carro in carros:
+#         if carro.cliente is not None:
+#             carro.comunicador.publish("central", "need move")
+#         else:
+#             carro.comunicador.publish("central", "no client")
+#
+#         i.update_graph()
+#         print(i.cliente)
+#
+#     figure.canvas.draw()
+#     figure.canvas.flush_events()
 
