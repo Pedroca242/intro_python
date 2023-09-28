@@ -63,12 +63,17 @@ while True:
     for carro in carros:
         if "cliente" in carro.comunicador.info:
             index = int(carro.comunicador.info.split('/')[-1])
-            carro.cliente = clientes[index]
+            carros[index].cliente = clientes[index]
         if "way_point" in carro.comunicador.info:
             index = int(carro.comunicador.info.split('/')[-1])
             way_point = eval(carro.comunicador.info.split('/')[-2])
             carros[index].way_point = way_point
-
+        if "move" in carro.comunicador.info:
+            index = int(carro.comunicador.info.split('/')[-1])
+            carros[index].pos = carro.comunicador.info.split('/')[1]
+            carros[index].passageiro = carro.comunicador.info.split('/')[2]
+            carros[index].speed = carro.comunicador.info.split('/')[3]
+        print(carros[0].pos)
 
 
 

@@ -78,28 +78,24 @@ class Central_de_controle:
     def send_move(self):
         for i in self.carros:
             if i.cliente is not None:
-                i.show_point()
-                if i.way_point is None:
-                    self.send_waypoint(i)
-
                 if i.pos == i.cliente.pos and i.pos != i.cliente.goal:
                     i.passageiro = True
 
                 if i.passageiro == True:
                     i.cliente.pos = i.pos
-                    i.cliente.remove_graph()
+                    #i.cliente.remove_graph()
                 else:
                     i.cliente.pos = i.cliente.pos.copy()
-                    i.cliente.show_point()
+                    #i.cliente.show_point()
 
                 if i.pos == i.cliente.goal and i.cliente.pos == i.cliente.goal:
                     i.cliente.need_ride = True
                     i.cliente = None
                     i.passageiro = False
 
-                if i.pos == i.way_point and i.cliente is not None:
-                    self.send_waypoint(i)
-                self.dont_collide(i)
+                # if i.pos == i.way_point and i.cliente is not None:
+                #     self.send_waypoint(i)
+                #self.dont_collide(i)
                 self.next_move(i)
 
     def new_client(self):

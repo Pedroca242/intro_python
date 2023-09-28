@@ -55,7 +55,16 @@ while True:
                 if i.way_point is None or i.pos == i.way_point:
                     i.way_point = central.send_waypoint(i)
                     central.comunicador.publish("carro", f'way_point/{i.way_point}/{clientes.index(i.cliente)}')
-                    time.sleep(0.5)
+                elif i.way_point is not None:
+                    central.comunicador.publish("carro", f'move/{i.pos}/{i.passageiro}/{i.speed}/{clientes.index(i.cliente)}')
+                    central.comunicador.publish("cliente", f'move/{i.cliente.pos}/{i.cliente.need_ride}')
+                    central.send_move()
+
+
+
+
+
+
 
 
 
