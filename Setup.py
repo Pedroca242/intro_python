@@ -9,6 +9,7 @@ class Setup:
         self.ruas = ruas
         self.mapa = self.gerar_mapa()
         self.carros = [Carro(random_pos(self.mapa)) for i in range(n_carros)]
+        self.comunicador = None
 
 
     def gerar_clientes(self, max_clientes):
