@@ -30,7 +30,7 @@ setup.comunicador.start()
 setup.comunicador.subscribe("central")
 
 
-
+flag = False
 
 while True:
     if "Setup" in setup.comunicador.info:
@@ -45,20 +45,37 @@ while True:
             clientes[int(tipo[-1])] = Cliente(pos, goal)
 
     if 0 not in carros and 0 not in clientes:
-        central = Central_de_controle(carros, clientes, MQTTCommunicator("central", "localhost"), ruas)
-        central.comunicador.subscribe("central")
-        for i in carros:
-            if i.cliente is None:
-                central.new_client()
-                central.comunicador.publish("carro", f'cliente/{clientes.index(i.cliente)}')
-            else:
-                if i.way_point is None or i.pos == i.way_point:
-                    i.way_point = central.send_waypoint(i)
-                    central.comunicador.publish("carro", f'way_point/{i.way_point}/{clientes.index(i.cliente)}')
-                elif i.way_point is not None:
-                    central.comunicador.publish("carro", f'move/{i.pos}/{i.passageiro}/{i.speed}/{clientes.index(i.cliente)}')
-                    central.comunicador.publish("cliente", f'move/{i.cliente.pos}/{i.cliente.need_ride}')
-                    central.send_move()
+        if not flag:
+            central = Central_de_controle(carros, clientes, MQTTCommunicator("central", "localhost"), ruas)
+            central.comunicador.start()
+            central.comunicador.subscribe("central")
+            flag = True
+        else:
+            for i in carros:
+                if i.cliente is None:
+                    central.new_client(i)
+                    if i.cliente is not None:
+                        central.comunicador.publish(f"carro{carros.index(i)}", f'cliente/{clientes.index(i.cliente)}')
+                    time.sleep(0.1)
+
+                if "new_goal" in central.comunicador.info:
+                    index = int(central.comunicador.info.split('/')[0][-1])
+                    clientes[index].goal = eval(central.comunicador.info.split('/')[-1])
+
+                if "need_ride" in central.comunicador.info:
+                    index = int(central.comunicador.info.split('/')[0][-1])
+                    clientes[index].need_ride = True
+
+                if i.way_point is None or (str(i.pos) == central.comunicador.info):
+                    if i.cliente is not None:
+                        central.send_waypoint(i)
+                    central.comunicador.publish(f"carro{carros.index(i)}", f'way_point/{i.way_point}')
+                    time.sleep(0.1)
+                else:
+                    central.send_move(i)
+
+
+
 
 
 

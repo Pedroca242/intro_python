@@ -75,37 +75,37 @@ class Central_de_controle:
             carro.way_point = self.find_waypoint(carro, carro.cliente.goal)
         return carro.way_point
 
-    def send_move(self):
-        for i in self.carros:
-            if i.cliente is not None:
-                if i.pos == i.cliente.pos and i.pos != i.cliente.goal:
-                    i.passageiro = True
+    def send_move(self, carro):
+            if carro.cliente is not None:
+                if carro.pos == carro.cliente.pos and carro.pos != carro.cliente.goal:
+                    carro.passageiro = True
 
-                if i.passageiro == True:
-                    i.cliente.pos = i.pos
-                    #i.cliente.remove_graph()
+                if carro.passageiro == True:
+                    carro.cliente.pos = carro.pos
                 else:
-                    i.cliente.pos = i.cliente.pos.copy()
-                    #i.cliente.show_point()
+                    carro.cliente.pos = carro.cliente.pos.copy()
 
-                if i.pos == i.cliente.goal and i.cliente.pos == i.cliente.goal:
-                    i.cliente.need_ride = True
-                    i.cliente = None
-                    i.passageiro = False
+                if carro.pos == carro.cliente.goal and carro.cliente.pos == carro.cliente.goal:
+                    # carro.cliente.need_ride = True
+                    carro.cliente = None
+                    carro.passageiro = False
+                self.next_move(carro)
 
-                # if i.pos == i.way_point and i.cliente is not None:
-                #     self.send_waypoint(i)
-                #self.dont_collide(i)
-                self.next_move(i)
-
-    def new_client(self):
+    def new_client(self, carro):
         for cliente in self.clientes:
             if cliente.need_ride:
-                carros_disponiveis = [carro for carro in self.carros if carro.cliente is None]
-                if carros_disponiveis:
-                    carro_escolhido = np.random.choice(carros_disponiveis)
-                    carro_escolhido.cliente = cliente
-                    cliente.need_ride = False
+                carro.cliente = cliente
+                cliente.need_ride = False
+                return
+
+    # def new_client(self):
+    #     for cliente in self.clientes:
+    #         if cliente.need_ride:
+    #             carros_disponiveis = [carro for carro in self.carros if carro.cliente is None]
+    #             if carros_disponiveis:
+    #                 carro_escolhido = np.random.choice(carros_disponiveis)
+    #                 carro_escolhido.cliente = cliente
+    #                 cliente.need_ride = False
 
 
 def manhattan_distance(pos1, pos2):
