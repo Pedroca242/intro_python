@@ -64,13 +64,16 @@ n = [100 for i in range(len(clientes))]
 
 while True:
     for cliente, j in zip(clientes, range(len(clientes))):
-        if cliente.need_ride:
+        if cliente.need_ride and not cliente.have_point:
+            time.sleep(0.01)
             cliente.show_point()
         if n[j] == 100:
             n[j] = 0
             setup.new_goal(cliente)
             cliente.comunicador.publish("central", f"need_car/{cliente.comunicador.client_id}")
+            time.sleep(0.1)
         n[j] += 1
+
 
     for carro in carros:
         if "cliente" in carro.comunicador.info:
@@ -96,16 +99,18 @@ while True:
         if carro.cliente is not None:
             if carro.pos == carro.cliente.goal and carro.cliente.pos == carro.cliente.goal:
                 carro.comunicador.publish("central", f"{carro.comunicador.client_id}/{carro.cliente.comunicador.client_id}/livre")
+                time.sleep(0.1)
+
+
+        if carro.passageiro:
+            carro.cliente.have_point = False
+            carro.cliente.remove_graph()
 
         if carro.way_point is not None:
             carro.send_move()
             carro.update_graph()
 
-        if carro.passageiro:
-            carro.cliente.remove_graph()
-
-
-        print(carro.passageiro)
+        print(carro.cliente)
 
     figure.canvas.draw()
     figure.canvas.flush_events()
