@@ -25,10 +25,9 @@ class Setup:
             mapa[:, i] = 0
         return mapa
 
-    def new_goal(self):
-        for i in self.clientes:
-            if i.need_ride == True:
-                i.goal = random_pos(self.mapa)
+    def new_goal(self, cliente):
+        if cliente.need_ride == True:
+            cliente.goal = random_pos(self.mapa)
 
 def random_pos(matriz):
     linhas = len(matriz)

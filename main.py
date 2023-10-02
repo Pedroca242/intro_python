@@ -60,44 +60,77 @@ for cliente in clientes:
 
 n = 0
 while True:
+    for cliente in clientes:
+        if cliente.need_ride:
+            cliente.comunicador.publish("central", f"need_car/{cliente.comunicador.client_id}")
+
+
     for carro in carros:
         if "cliente" in carro.comunicador.info:
-            index = int(carro.comunicador.info.split('/')[-1])
-            carro.cliente = clientes[index]
+            selected_id = carro.comunicador.info.split('/')[-1]
+            selected_client = None
+            for i in clientes:
+                if i.comunicador.client_id == selected_id:
+                    selected_client = i
+            carro.cliente = selected_client
+            selected_client.need_ride = False
 
+        if (carro.way_point is None or carro.pos == carro.way_point) and carro.cliente is not None:
+            if not carro.passageiro:
+                carro.comunicador.publish("central", f"{carro.comunicador.client_id}/need_waypoint/{carro.pos}/{carro.cliente.pos}")
+            else:
+                carro.comunicador.publish("central", f"{carro.comunicador.client_id}/need_waypoint/{carro.pos}/{carro.cliente.goal}")
 
         if "way_point" in carro.comunicador.info:
             way_point = eval(carro.comunicador.info.split('/')[-1])
             carro.way_point = way_point
 
+        # if carro.cliente is not None:
+        #     if carro.pos == carro.cliente.goal and carro.cliente.pos == carro.cliente.goal:
+        #         carro.comunicador.publish("central", f"{carro.comunicador.client_id}/{carro.cliente.comunicador.client_id}/livre")
+
         if carro.way_point is not None:
-            if carro.pos == carro.way_point:
-                carro.comunicador.publish("central", f'{carro.pos}')
-            if carro.pos == carro.cliente.goal:
-                setup.new_goal()
-                for cliente in clientes:
-                    cliente.comunicador.publish("central", f'cliente{cliente.comunicador.client_id[-1]}/new_goal/{cliente.goal}')
-                    cliente.show_point()
             carro.send_move()
-        carro.update_graph()
-        if carro.passageiro and carro.cliente is not None:
+            carro.update_graph()
+
+        if carro.passageiro:
             carro.cliente.remove_graph()
-            carro.cliente.pos = carro.pos
 
-        n += 1
-        if n == 100:
-            for cliente in clientes:
-                if cliente.pos == cliente.goal:
-                    cliente.need_ride = True
-                    cliente.comunicador.publish("central", f'cliente{cliente.comunicador.client_id[-1]}/need_ride')
-
-
-
+        print(carro.passageiro)
 
 
 
     figure.canvas.draw()
     figure.canvas.flush_events()
+
+
+# if carro.way_point is not None:
+#     if carro.pos == carro.way_point:
+#         carro.comunicador.publish("central", f'{carro.pos}')
+#     if carro.pos == carro.cliente.goal:
+#         setup.new_goal()
+#         for cliente in clientes:
+#             cliente.comunicador.publish("central", f'cliente{cliente.comunicador.client_id[-1]}/new_goal/{cliente.goal}')
+#             cliente.show_point()
+#     carro.send_move()
+# carro.update_graph()
+# if carro.passageiro and carro.cliente is not None:
+#     carro.cliente.remove_graph()
+#     carro.cliente.pos = carro.pos
+#
+# n += 1
+# if n == 100:
+#     for cliente in clientes:
+#         if cliente.pos == cliente.goal:
+#             cliente.need_ride = True
+#             cliente.comunicador.publish("central", f'cliente{cliente.comunicador.client_id[-1]}/need_ride')
+
+
+
+
+
+
+
 
 
 

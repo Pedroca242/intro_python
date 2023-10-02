@@ -2,24 +2,22 @@ import numpy as np
 
 class Central_de_controle:
 
-    def __init__(self, carros, clientes, comunicador, ruas):
-        self.carros = carros
-        self.clientes = clientes
+    def __init__(self, comunicador, ruas):
         self.delta_t = 0.1
         self.ruas = ruas
         self.comunicador = comunicador
 
-    def find_waypoint(self, carro, goal):
-        way_point = carro.pos
+    def find_waypoint(self,pos1, goal):
+        way_point = pos1
         rua_proxima_y = self.ruas[np.absolute(self.ruas - goal[1]).argmin()]
         rua_proxima_x = self.ruas[np.absolute(self.ruas - goal[0]).argmin()]
 
-        if carro.pos[0] in self.ruas and carro.pos[1] != rua_proxima_y:
-            way_point = [carro.pos[0], rua_proxima_y]
-        elif carro.pos[1] in self.ruas and carro.pos[0] != rua_proxima_x:
-            way_point = [rua_proxima_x, carro.pos[1]]
+        if pos1[0] in self.ruas and pos1[1] != rua_proxima_y:
+            way_point = [pos1[0], rua_proxima_y]
+        elif pos1[1] in self.ruas and pos1[0] != rua_proxima_x:
+            way_point = [rua_proxima_x, pos1[1]]
 
-        if carro.pos[0] == rua_proxima_x and carro.pos[1] == rua_proxima_y:
+        if pos1[0] == rua_proxima_x and pos1[1] == rua_proxima_y:
             way_point = goal
 
         return way_point
