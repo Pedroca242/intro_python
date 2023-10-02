@@ -77,56 +77,7 @@ while True:
         central.comunicador.publish(central.comunicador.info.split('/')[0], f'way_point/{way_point}')
         time.sleep(0.01)
 
-    # if "livre" in central.comunicador.info:
-    #     free_cars.append(central.comunicador.info.split('/')[0])
-    #     current_clients.remove(central.comunicador.info.split('/')[1])
-
-
-
-
-# while True:
-#
-#
-#     if 0 not in carros and 0 not in clientes:
-#         if not flag:
-#             central = Central_de_controle(carros, clientes, MQTTCommunicator("central", "localhost"), ruas)
-#             central.comunicador.start()
-#             central.comunicador.subscribe("central")
-#             flag = True
-#         else:
-#             for i in carros:
-#                 if i.cliente is None:
-#                     central.new_client(i)
-#                     if i.cliente is not None:
-#                         central.comunicador.publish(f"carro{carros.index(i)}", f'cliente/{clientes.index(i.cliente)}')
-#                     time.sleep(0.1)
-#
-#                 if "new_goal" in central.comunicador.info:
-#                     index = int(central.comunicador.info.split('/')[0][-1])
-#                     clientes[index].goal = eval(central.comunicador.info.split('/')[-1])
-#
-#                 if "need_ride" in central.comunicador.info:
-#                     index = int(central.comunicador.info.split('/')[0][-1])
-#                     clientes[index].need_ride = True
-#
-#                 if i.way_point is None or (str(i.pos) == central.comunicador.info):
-#                     if i.cliente is not None:
-#                         central.send_waypoint(i)
-#                     central.comunicador.publish(f"carro{carros.index(i)}", f'way_point/{i.way_point}')
-#                     time.sleep(0.1)
-#                 else:
-#                     central.send_move(i)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    if "livre" in central.comunicador.info:
+        if central.comunicador.info.split('/')[0] not in free_cars and  central.comunicador.info.split('/')[1] in current_clients:
+            free_cars.append(central.comunicador.info.split('/')[0])
+            current_clients.remove(central.comunicador.info.split('/')[1])

@@ -96,15 +96,5 @@ class Central_de_controle:
                 cliente.need_ride = False
                 return
 
-    # def new_client(self):
-    #     for cliente in self.clientes:
-    #         if cliente.need_ride:
-    #             carros_disponiveis = [carro for carro in self.carros if carro.cliente is None]
-    #             if carros_disponiveis:
-    #                 carro_escolhido = np.random.choice(carros_disponiveis)
-    #                 carro_escolhido.cliente = cliente
-    #                 cliente.need_ride = False
-
-
 def manhattan_distance(pos1, pos2):
     return abs(pos2[0] - pos1[0]) + abs(pos2[1] - pos1[1])

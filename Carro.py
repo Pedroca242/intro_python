@@ -40,7 +40,7 @@ class Carro:
                     self.cliente.pos = self.cliente.pos.copy()
 
                 if self.pos == self.cliente.goal and self.cliente.pos == self.cliente.goal:
-                    #self.cliente.need_ride = True
+                    self.cliente.need_ride = True
                     self.cliente = None
                     self.passageiro = False
                 self.next_move()
