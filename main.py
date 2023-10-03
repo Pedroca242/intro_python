@@ -19,10 +19,6 @@ n_carros = config["n_carros"]
 
 ruas = np.array([i for i in range(0, n_ruas*20, 20)])
 
-
-
-
-
 logging.basicConfig(level=logging.INFO)
 
 setup = Setup(n_carros, ruas)
@@ -59,7 +55,6 @@ for cliente in clientes:
     time.sleep(0.1)
 
 n = [100 for i in range(len(clientes))]
-
 
 
 while True:
@@ -109,8 +104,6 @@ while True:
         if carro.way_point is not None:
             carro.send_move()
             carro.update_graph()
-
-        print(carro.cliente)
 
     figure.canvas.draw()
     figure.canvas.flush_events()

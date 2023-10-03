@@ -14,7 +14,6 @@ class Setup:
 
     def gerar_clientes(self, max_clientes):
         n_clientes = max_clientes
-        # clientes = [Cliente(random_pos(self.mapa), random_pos(self.mapa)) for i in range(n_clientes)]
         self.clientes = [Cliente(random_pos(self.mapa), random_pos(self.mapa)) for i in range(n_clientes)]
         return self.clientes
 

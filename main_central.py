@@ -4,8 +4,6 @@ from Comunicacao import MQTTCommunicator
 from Setup import Setup
 import numpy as np
 import time
-from Carro import Carro
-from Cliente import Cliente
 import json
 
 with open('config.json', 'r') as arquivo_config:
@@ -45,21 +43,12 @@ while True:
     if 0 not in carros and 0 not in clientes:
         break
 
-# for i in carros:
-#     random_client = np.random.choice(clientes)
-#     objetos[i] = random_client
-#     clientes.remove(random_client)
-#
-# print(objetos)
-
 central = Central_de_controle(MQTTCommunicator("central", "localhost"), ruas)
 central.comunicador.start()
 central.comunicador.subscribe("central")
 
 free_cars = [car for car in carros]
 current_clients = []
-
-
 
 while True:
     if "need_car" in central.comunicador.info:
