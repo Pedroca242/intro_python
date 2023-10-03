@@ -6,7 +6,7 @@ import logging
 import json
 import time
 
-def draw_map(mapa):
+def draw_map(mapa): #Funcao para plotar o mapa
     figure, ax = plt.subplots(figsize=(5,5))
     ax.imshow(mapa, cmap = 'gray_r', vmin = 0, vmax = 1,origin='lower')
     return figure, ax
@@ -23,15 +23,19 @@ logging.basicConfig(level=logging.INFO)
 
 setup = Setup(n_carros, ruas)
 setup.comunicador = MQTTCommunicator("Config_carros", "localhost")
-setup.comunicador.start()
+setup.comunicador.start() # iniciando comunicador do setup
 
 
 plt.ion()
 figure, ax = draw_map(setup.mapa)
 
+
+#gerar carros e clientes
 carros = setup.carros
 clientes = setup.gerar_clientes(n_carros)
 
+
+#plotar os pontos dos carros/clientes e iniciar seus comunicadores
 for carro, cliente, n in zip(carros, clientes, range(n_carros)):
     cliente.create_point(ax)
     cliente.comunicador = MQTTCommunicator(f'cliente{n}', "localhost")
@@ -46,6 +50,8 @@ for carro, cliente, n in zip(carros, clientes, range(n_carros)):
     cliente.comunicador.subscribe(f"{cliente.comunicador.client_id}")
     carro.comunicador.subscribe(f"{carro.comunicador.client_id}")
 
+
+# carros e clientes se apresentam para a central
 for carro in carros:
     carro.comunicador.publish("central", f'Setup/{carro.comunicador.client_id}/{carro.pos}/{carro.speed}')
     time.sleep(0.1)
@@ -95,7 +101,6 @@ while True:
             if carro.pos == carro.cliente.goal and carro.cliente.pos == carro.cliente.goal:
                 carro.comunicador.publish("central", f"{carro.comunicador.client_id}/{carro.cliente.comunicador.client_id}/livre")
                 time.sleep(0.1)
-
 
         if carro.passageiro:
             carro.cliente.have_point = False

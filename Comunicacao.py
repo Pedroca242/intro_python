@@ -1,6 +1,8 @@
 import paho.mqtt.client as mqtt
 import logging
 
+# Comunicacao foi feita utilizando o mosquitto
+
 class MQTTCommunicator:
     def __init__(self, client_id, broker_address, port=1883):
         self.client_id = client_id

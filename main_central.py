@@ -29,6 +29,8 @@ setup.comunicador.start()
 
 setup.comunicador.subscribe("central")
 
+
+#espera todos os carros/clientes se apresentarem
 while True:
     if "Setup" in setup.comunicador.info:
         tipo = setup.comunicador.info.split('/')[1]
@@ -47,8 +49,8 @@ central = Central_de_controle(MQTTCommunicator("central", "localhost"), ruas)
 central.comunicador.start()
 central.comunicador.subscribe("central")
 
-free_cars = [car for car in carros]
-current_clients = []
+free_cars = [car for car in carros] # lista com os carros livres
+current_clients = []    # lista com os clientes atuais
 
 while True:
     if "need_car" in central.comunicador.info:
